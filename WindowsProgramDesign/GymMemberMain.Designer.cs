@@ -173,7 +173,7 @@
             this.btndelete.TabIndex = 38;
             this.btndelete.Text = "Delete";
             this.btndelete.UseVisualStyleBackColor = true;
-            this.btndelete.Click += new System.EventHandler(this.btndelete_Click_1);
+            this.btndelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // txtAddress
             // 

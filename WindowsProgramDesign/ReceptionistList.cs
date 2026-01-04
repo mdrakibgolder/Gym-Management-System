@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,23 +15,23 @@ namespace WindowsProgramDesign
 {
     public partial class ReceptionistList : Form
     {
-        private static string connectionString = "Server=HP_VICTUS\\SQLEXPRESS;Database=GymManagementSystem;Trusted_Connection=True;";
-
         public ReceptionistList()
         {
             InitializeComponent();
         }
+        
         private void ReceptionistList_Load(object sender, EventArgs e)
         {
             LoadData(); 
         }
+        
         private void LoadData()
         {
             try
             {
                 string query = "SELECT * FROM Receptionists";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     using (SqlDataAdapter da = new SqlDataAdapter(query, connection))
                     {
@@ -69,7 +69,7 @@ namespace WindowsProgramDesign
                 string query = "INSERT INTO Receptionists (Name, PhoneNumber, Email, HomeAddress, EmploymentStatus) " +
                                "VALUES (@Name, @PhoneNumber, @Email, @HomeAddress, @EmploymentStatus)";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -122,7 +122,7 @@ namespace WindowsProgramDesign
 
                 string query = "SELECT * FROM Receptionists WHERE ReceptionistID LIKE @SearchKeyword OR Name LIKE @SearchKeyword";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     using (SqlDataAdapter da = new SqlDataAdapter(query, connection))
                     {
@@ -167,7 +167,7 @@ namespace WindowsProgramDesign
                 string query = "UPDATE Receptionists SET Name = @Name, PhoneNumber = @PhoneNumber, Email = @Email, " +
                                "HomeAddress = @HomeAddress, EmploymentStatus = @EmploymentStatus WHERE ReceptionistID = @ReceptionistID";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     using (SqlCommand cmd = new SqlCommand(query, connection))
                     {
@@ -214,7 +214,7 @@ namespace WindowsProgramDesign
 
                 string query = "DELETE FROM Receptionists WHERE ReceptionistID = @ReceptionistID";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     using (SqlCommand cmd = new SqlCommand(query, connection))
                     {
@@ -259,3 +259,4 @@ namespace WindowsProgramDesign
         }
     }
 }
+

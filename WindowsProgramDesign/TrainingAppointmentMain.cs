@@ -17,7 +17,6 @@ namespace WindowsProgramDesign
     {
         int selected_appiontmentId { get; set; }
 
-        private static string connectionString = "Server=HP_VICTUS\\SQLEXPRESS;Database=GymManagementSystem;Trusted_Connection=True;";
         public TraningAppointment()
         {
             InitializeComponent();
@@ -26,10 +25,9 @@ namespace WindowsProgramDesign
 
         private void UpdateGridView()
         {
-            // SQL query to fetch the data from the view
             string query = "SELECT * FROM v_AppointmentDetails";
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
             using (SqlDataAdapter dataAdapter = new SqlDataAdapter(query, connection))
             {
                 DataTable dataTable = new DataTable();
@@ -43,10 +41,7 @@ namespace WindowsProgramDesign
         {
             try
             {
-                string query = "SELECT * FROM Appointment";
-
-                
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 using (SqlDataAdapter dataAdapter = new SqlDataAdapter("select * from Members", connection))
                 {
                     DataTable dataTableMembers = new DataTable();
@@ -58,7 +53,7 @@ namespace WindowsProgramDesign
 
                 }
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 using (SqlDataAdapter dataAdapter = new SqlDataAdapter("SELECT * FROM TrainingSessions", connection))
                 {
                     DataTable dataTableSessions = new DataTable();
@@ -89,7 +84,7 @@ namespace WindowsProgramDesign
             string query = "INSERT INTO Appointment (MemberID, SessionID) VALUES (@MemberID, @SessionID)";
 
             // Using statement to handle the connection
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
             using (SqlCommand command = new SqlCommand(query, connection))
             {
                 // Adding parameters to prevent SQL injection
@@ -120,7 +115,7 @@ namespace WindowsProgramDesign
                 // SQL query to update the selected appointment with new session details
                 string query = "UPDATE Appointment SET SessionID = @SessionID WHERE AppointmentID = @AppointmentID AND MemberID = @MemberID";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     // Adding parameters to prevent SQL injection
@@ -182,7 +177,7 @@ namespace WindowsProgramDesign
                 // SQL query to get the details of the selected appointment
                 string query = "SELECT MemberID, SessionID FROM Appointment WHERE AppointmentID = @AppointmentID";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@AppointmentID", selected_appiontmentId);
@@ -213,7 +208,7 @@ namespace WindowsProgramDesign
                 // SQL query to delete the selected appointment
                 string query = "DELETE FROM Appointment WHERE AppointmentID = @AppointmentID";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     // Adding parameter to prevent SQL injection
@@ -260,7 +255,7 @@ namespace WindowsProgramDesign
                         m.Name LIKE @SearchText OR
                         ts.TrainerName LIKE @SearchText";
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
             using (SqlCommand command = new SqlCommand(query, connection))
             {
                 // Add parameter with wildcard characters for partial matching

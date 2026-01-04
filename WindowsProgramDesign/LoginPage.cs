@@ -14,8 +14,7 @@ namespace WindowsProgramDesign
 {
     public partial class Home : Form
     {
-        private static string connectionString = "Server=HP_VICTUS\\SQLEXPRESS;Database=GymManagementSystem;Trusted_Connection=True;";
-        SqlConnection connection = new SqlConnection(connectionString); 
+        SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString); 
         private bool isPasswordVisible = false;
 
         public Home()
@@ -25,39 +24,44 @@ namespace WindowsProgramDesign
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            string username = txtUsername.Text;
+            string username = txtUsername.Text.Trim();
             string password = txtPassword.Text;
+
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            {
+                MessageBox.Show("Please enter both username and password.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             if (ValidateUser(username, password))
             {
                 string role = GetUserRole(username);
                 if (role == "Manager")
                 {
-                    // Redirect to Manager Dashboard
                     ManagerMain managerForm = new ManagerMain();
                     managerForm.Show();
                     this.Hide();
                 }
                 else if (role == "Receptionist")
                 {
-                    // Redirect to Receptionist Dashboard
                     ReceptionistMain receptionistForm = new ReceptionistMain();
                     receptionistForm.Show();
                     this.Hide();
+                }
+                else
+                {
+                    MessageBox.Show("Unknown user role.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
             {
                 MessageBox.Show("Invalid Username or Password.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            connection.Close();
-
-
         }
 
         private bool ValidateUser(string username, string password)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(DatabaseConfig.ConnectionString))
             {
                 conn.Open();
                 string query = "SELECT Password FROM Users WHERE Username = @Username AND Status = 'Active'";
@@ -83,7 +87,7 @@ namespace WindowsProgramDesign
 
         private string GetUserRole(string username)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(DatabaseConfig.ConnectionString))
             {
                 conn.Open();
                 string query = "SELECT Role FROM Users WHERE Username = @Username AND Status = 'Active'";
@@ -93,10 +97,8 @@ namespace WindowsProgramDesign
                     cmd.Parameters.AddWithValue("@Username", username);
                     return cmd.ExecuteScalar()?.ToString();
                 }
-     
             }
         }
-
 
         private void btnShowPassword_Click(object sender, EventArgs e)
         {
@@ -141,6 +143,24 @@ namespace WindowsProgramDesign
                 Properties.Settings.Default.Save(); // Persist the settings
                 MessageBox.Show("Your login credentials will not be remembered.", "Remember Me", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+        }
+
+        private void Register_btn(object sender, EventArgs e)
+        {
+            // Open registration form
+            Registration registrationForm = new Registration();
+            registrationForm.Show();
+            this.Hide();
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+            // Username label click event - no action needed
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+            // Password label click event - no action needed
         }
     }
 }

@@ -33,10 +33,7 @@ namespace WindowsProgramDesign
 
             try
             {
-                // Connection string (replace with your actual connection string)
-                string connectionString = "Server=HP_VICTUS\\SQLEXPRESS;Database=GymManagementSystem;Trusted_Connection=True;";
-
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     connection.Open();
 

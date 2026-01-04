@@ -14,12 +14,11 @@ namespace WindowsProgramDesign
 {
     public partial class Members : Form
     {
-        private static string connectionString = "Server=HP_VICTUS\\SQLEXPRESS;Database=GymManagementSystem;Trusted_Connection=True;";
-
         public Members()
         {
             InitializeComponent();
         }
+        
         private void Members_Load(object sender, EventArgs e)
         {
             LoadData();
@@ -29,7 +28,7 @@ namespace WindowsProgramDesign
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     string query = "SELECT * FROM Members";
                     SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
@@ -75,7 +74,7 @@ namespace WindowsProgramDesign
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, connection))
                 {
                     cmd.Parameters.Add("@MemberID", SqlDbType.Int).Value = memberID;
@@ -86,7 +85,7 @@ namespace WindowsProgramDesign
                     if (rowsAffected > 0)
                     {
                         MessageBox.Show("Member deleted successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadData(); // Refresh data
+                        LoadData();
                         
                     }
                     else
@@ -105,8 +104,6 @@ namespace WindowsProgramDesign
             }
         }
 
-   
-
         private void btnUpdate_Click(object sender, EventArgs e)
         {
             try
@@ -122,7 +119,7 @@ namespace WindowsProgramDesign
                 string query = "UPDATE Members SET Name = @Name, PhoneNumber = @PhoneNumber, Email = @Email, Address = @Address, " +
                                "MembershipType = @MembershipType, RegistrationDate = @RegistrationDate WHERE MemberID = @MemberID";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -163,7 +160,7 @@ namespace WindowsProgramDesign
                 string query = "INSERT INTO Members (Name, PhoneNumber, Email, Address, MembershipType, RegistrationDate) " +
                                "VALUES (@Name, @PhoneNumber, @Email, @Address, @MembershipType, @RegistrationDate)";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -194,9 +191,9 @@ namespace WindowsProgramDesign
             try
             {
                 string searchValue = txtSearch.Text;
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
-                    string query = "SELECT * FROM Members WHERE Name LIKE @Search OR Phone LIKE @Search";
+                    string query = "SELECT * FROM Members WHERE Name LIKE @Search OR PhoneNumber LIKE @Search";
                     SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
                     adapter.SelectCommand.Parameters.AddWithValue("@Search", "%" + searchValue + "%");
                     DataTable dataTable = new DataTable();
@@ -233,35 +230,6 @@ namespace WindowsProgramDesign
                 txtAddress.Text = row.Cells["Address"].Value.ToString();
                 cmbMembershipType.Text = row.Cells["MembershipType"].Value.ToString();
                 dtpRegistrationDate.Value = Convert.ToDateTime(row.Cells["RegistrationDate"].Value);
-            }
-        }
-
-        private void btndelete_Click_1(object sender, EventArgs e)
-        {
-            try
-            {
-                int memberId = int.Parse(txtMemberID.Text);
-
-                string query = "DELETE FROM Members WHERE MemberID = @MemberID";
-
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@MemberID", memberId);
-
-                        connection.Open();
-                        command.ExecuteNonQuery();
-                    }
-                }
-
-                MessageBox.Show("Member deleted successfully!");
-                LoadData();
-                ClearFields();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message);
             }
         }
     }

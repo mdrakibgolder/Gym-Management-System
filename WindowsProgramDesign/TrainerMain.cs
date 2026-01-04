@@ -14,9 +14,6 @@ namespace WindowsProgramDesign
 {
     public partial class Trainer : Form
     {
-        private static string connectionString = "Server=HP_VICTUS\\SQLEXPRESS;Database=GymManagementSystem;Trusted_Connection=True;";
-     
-
         public Trainer()
         {
             InitializeComponent();   
@@ -31,7 +28,7 @@ namespace WindowsProgramDesign
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     connection.Open();
                     string query = "SELECT * FROM Trainers"; // Ensure table name is "Trainers"
@@ -59,7 +56,7 @@ namespace WindowsProgramDesign
             {
                 string query = "DELETE FROM Trainers WHERE TrainerID = @TrainerID";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     using (SqlCommand cmd = new SqlCommand(query, connection))
                     {
@@ -84,22 +81,31 @@ namespace WindowsProgramDesign
         {
             try
             {
-                string name = txtName.Text;
-                string email = txtEmail.Text;
-                string PhoneNumber = txtPhoneNumber.Text;
-                string address = txtAddress.Text;
+                if (string.IsNullOrWhiteSpace(txtName.Text) || 
+                    string.IsNullOrWhiteSpace(txtEmail.Text) || 
+                    string.IsNullOrWhiteSpace(txtPhoneNumber.Text) ||
+                    cboxEmployment.SelectedItem == null)
+                {
+                    MessageBox.Show("Please fill in all required fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                string name = txtName.Text.Trim();
+                string email = txtEmail.Text.Trim();
+                string PhoneNumber = txtPhoneNumber.Text.Trim();
+                string address = txtAddress.Text.Trim();
                 string employmentStatus = cboxEmployment.SelectedItem.ToString();
 
                 string query = "INSERT INTO Trainers (Name, Email, PhoneNumber, Address, EmploymentStatus) VALUES (@Name, @Email, @PhoneNumber, @Address, @EmploymentStatus)";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@Name", name);
                         command.Parameters.AddWithValue("@Email", email);
                         command.Parameters.AddWithValue("@PhoneNumber", PhoneNumber);
-                        command.Parameters.AddWithValue("@Address", address);
+                        command.Parameters.AddWithValue("@Address", string.IsNullOrWhiteSpace(address) ? (object)DBNull.Value : address);
                         command.Parameters.AddWithValue("@EmploymentStatus", employmentStatus);
 
                         connection.Open();
@@ -109,6 +115,7 @@ namespace WindowsProgramDesign
 
                 MessageBox.Show("Record added successfully!");
                 LoadData();
+                btnClearFields_Click(null, null);
             }
             catch (Exception ex)
             {
@@ -143,7 +150,7 @@ namespace WindowsProgramDesign
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     using (SqlCommand cmd = new SqlCommand(query, connection))
                     {
@@ -198,7 +205,7 @@ namespace WindowsProgramDesign
 
                 string query = "SELECT * FROM Trainers WHERE Name LIKE @Name";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     using (SqlDataAdapter da = new SqlDataAdapter(query, connection))
                     {

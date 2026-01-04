@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -16,7 +16,7 @@ namespace WindowsProgramDesign
 {
     public partial class ReceptionistProfile : Form
     {
-        private static string connectionString = "Server=HP_VICTUS\\SQLEXPRESS;Database=GymManagementSystem;Trusted_Connection=True;";
+        
         public ReceptionistProfile()
         {
             InitializeComponent();
@@ -26,7 +26,7 @@ namespace WindowsProgramDesign
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     // Query to get all data from ReceptionistProfile table
                     SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM ReceptionistProfile", con);
@@ -126,7 +126,7 @@ namespace WindowsProgramDesign
             {
                 try
                 {
-                    using (SqlConnection con = new SqlConnection(connectionString))
+                    using (SqlConnection con = new SqlConnection(DatabaseConfig.ConnectionString))
                     {
                         con.Open();
                         SqlCommand cmd = new SqlCommand("DELETE FROM ReceptionistProfile WHERE ReceptionistID=@ReceptionistID", con);
@@ -163,7 +163,7 @@ namespace WindowsProgramDesign
 
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     con.Open();
                     SqlCommand cmd = new SqlCommand("UPDATE ReceptionistProfile SET Password=@Password, Name=@Name, PhoneNo=@PhoneNo, Email=@Email, Address=@Address, Employment=@Employment, ProfilePicture=@ProfilePicture WHERE ReceptionistID=@ReceptionistID", con);
@@ -255,4 +255,5 @@ namespace WindowsProgramDesign
 
     }
 }
+
 

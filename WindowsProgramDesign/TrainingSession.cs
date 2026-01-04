@@ -13,19 +13,19 @@ namespace WindowsProgramDesign
 {
     public partial class TrainingSession : Form
     {
-        private static string connectionString = "Server=HP_VICTUS\\SQLEXPRESS;Database=GymManagementSystem;Trusted_Connection=True;";
         public TrainingSession()
         {
             InitializeComponent();
             LoadData();
         }
+        
         private void LoadData()
         {
             try
             {
                 string query = "SELECT * FROM TrainingSessions";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     using (SqlDataAdapter da = new SqlDataAdapter(query, connection))
                     {
@@ -47,16 +47,38 @@ namespace WindowsProgramDesign
         {
             try
             {
-                string sessionName = txtSessionName.Text;
-                decimal price = decimal.Parse(txtPrice.Text); 
-                string category = txtCategory.Text;
-                int trainerID = int.Parse(txtTrainerID.Text); 
-                string trainerName = txtTrainerName.Text;
+                if (string.IsNullOrWhiteSpace(txtSessionName.Text) || 
+                    string.IsNullOrWhiteSpace(txtPrice.Text) ||
+                    string.IsNullOrWhiteSpace(txtCategory.Text) ||
+                    string.IsNullOrWhiteSpace(txtTrainerID.Text) ||
+                    string.IsNullOrWhiteSpace(txtTrainerName.Text))
+                {
+                    MessageBox.Show("Please fill in all required fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                string sessionName = txtSessionName.Text.Trim();
+                
+                if (!decimal.TryParse(txtPrice.Text, out decimal price) || price < 0)
+                {
+                    MessageBox.Show("Price must be a valid non-negative number.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                
+                string category = txtCategory.Text.Trim();
+                
+                if (!int.TryParse(txtTrainerID.Text, out int trainerID) || trainerID <= 0)
+                {
+                    MessageBox.Show("Trainer ID must be a valid positive number.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                
+                string trainerName = txtTrainerName.Text.Trim();
                 DateTime dateAndTime = dateTimePicker.Value;
 
                 string conflictCheckQuery = "SELECT COUNT(*) FROM TrainingSessions WHERE TrainerID = @TrainerID AND DateAndTime = @DateAndTime";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     using (SqlCommand conflictCommand = new SqlCommand(conflictCheckQuery, connection))
                     {
@@ -68,7 +90,7 @@ namespace WindowsProgramDesign
 
                         if (conflictCount > 0)
                         {
-                            MessageBox.Show("The trainer is already scheduled for another session at the same time. Please choose a different time.");
+                            MessageBox.Show("The trainer is already scheduled for another session at the same time. Please choose a different time.", "Scheduling Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                             return;
                         }
                     }
@@ -90,7 +112,8 @@ namespace WindowsProgramDesign
                 }
 
                 MessageBox.Show("Training session added successfully!");
-                LoadData(); // Refresh data
+                LoadData();
+                btnClearTrainingSessionFields_Click(null, null);
             }
             catch (Exception ex)
             {
@@ -115,7 +138,7 @@ namespace WindowsProgramDesign
                                "TrainerID = @TrainerID, TrainerName = @TrainerName, DateAndTime = @DateAndTime " +
                                "WHERE TrainingSessionID = @TrainingSessionID";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     using (SqlCommand cmd = new SqlCommand(query, connection))
                     {
@@ -157,7 +180,7 @@ namespace WindowsProgramDesign
 
                 string query = "DELETE FROM TrainingSessions WHERE TrainingSessionID = @TrainingSessionID";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     using (SqlCommand cmd = new SqlCommand(query, connection))
                     {
@@ -191,7 +214,7 @@ namespace WindowsProgramDesign
 
                 string query = "SELECT * FROM TrainingSessions WHERE SessionName LIKE @SearchKeyword OR Category LIKE @SearchKeyword";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 {
                     using (SqlDataAdapter da = new SqlDataAdapter(query, connection))
                     {
@@ -224,26 +247,7 @@ namespace WindowsProgramDesign
 
         private void MainMenu_Click(object sender, EventArgs e)
         {
-            try
-            {
-                this.Hide(); // Hide current form
-                ManagerMain mainForm = new ManagerMain();
-                mainForm.Show(); // Open the main form
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error: {ex.Message}");
-            }
-            try
-            {
-                this.Hide(); // Hide current form
-                ReceptionistMain mainForm = new ReceptionistMain();
-                mainForm.Show(); // Open the main form
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error: {ex.Message}");
-            }
+            this.Close();
         }
 
         private void ViewAll_Click(object sender, EventArgs e)

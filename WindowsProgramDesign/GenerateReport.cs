@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,7 +14,7 @@ namespace WindowsProgramDesign
 
     public partial class GenerateReport : Form
     {
-        private static string connectionString = "Server=HP_VICTUS\\SQLEXPRESS;Database=GymManagementSystem;Trusted_Connection=True;";
+        
         public GenerateReport()
         {
             InitializeComponent();
@@ -54,7 +54,7 @@ namespace WindowsProgramDesign
                 TS.SessionName
             FROM Appointment A
             INNER JOIN Members M ON A.MemberID = M.MemberID
-            INNER JOIN TrainingSessions TS ON A.SessionID = TS.SessionID";
+            INNER JOIN TrainingSessions TS ON A.SessionID = TS.TrainingSessionID";
                         break;
 
                     case "Members":
@@ -123,7 +123,7 @@ namespace WindowsProgramDesign
                         return;
                 }
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(DatabaseConfig.ConnectionString))
                 using (SqlDataAdapter adapter = new SqlDataAdapter(query, connection))
                 {
                     DataTable reportTable = new DataTable();
@@ -147,3 +147,4 @@ namespace WindowsProgramDesign
         }
     }
 }
+
