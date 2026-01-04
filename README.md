@@ -1,6 +1,6 @@
 # Gym Management System
 
-Windows Forms application targeting .NET Framework 4.8 that helps gyms manage members, staff, schedules, and inventory from a single desktop client. The solution currently ships with receptionist, trainer, manager, and member workflows implemented as dedicated forms under the `WindowsProgramDesign` project.
+Windows Forms application targeting .NET Framework 4.8 that helps gyms manage members, staff, schedules, and inventory from a single desktop client. The solution currently ships with receptionist, trainer, manager, and member workflows implemented as dedicated forms under the `GymManagementSystem` project.
 
 ## Prerequisites
 - Windows 10/11 with Visual Studio 2019 or later and the **.NET desktop development** workload installed
